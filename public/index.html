@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Mays Zona Libre Product Gallery App</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <style>
+      :root {
+        --primary-color: #4a90e2;
+        --secondary-color: #f39c12;
+        --background-color: #f8f9fa;
+        --text-color: #333;
+        --card-background: #ffffff;
+        --shadow-color: rgba(0, 0, 0, 0.1);
+      }
+
+      body {
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        margin: 0;
+        padding: 0;
+        background-color: var(--background-color);
+        color: var(--text-color);
+        transition: all 0.3s ease;
+      }
+
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 20px;
+      }
+
+      header {
+        background-color: var(--primary-color);
+        color: white;
+        padding: 20px 0;
+        box-shadow: 0 2px 10px var(--shadow-color);
+      }
+
+      h1 {
+        margin: 0;
+        font-size: 2.5em;
+        text-align: center;
+      }
+
+      .creator-link {
+        display: block;
+        text-align: center;
+        margin-top: 10px;
+        color: white;
+        text-decoration: none;
+        font-size: 1em;
+      }
+
+      .creator-link:hover {
+        text-decoration: underline;
+      }
+
+      .search-container {
+        display: flex;
+        justify-content: center;
+        margin: 20px 0;
+      }
+
+      #searchInput {
+        width: 50%;
+        padding: 10px;
+        font-size: 1em;
+        border: 2px solid var(--primary-color);
+        border-radius: 5px 0 0 5px;
+        outline: none;
+      }
+
+      .btn {
+        padding: 10px 20px;
+        font-size: 1em;
+        cursor: pointer;
+        background-color: var(--primary-color);
+        color: white;
+        border: none;
+        transition: background-color 0.3s ease;
+      }
+
+      .btn:hover {
+        background-color: #357abd;
+      }
+
+      #filterButton {
+        border-radius: 0 5px 5px 0;
+      }
+
+      #clearFilterButton {
+        border-radius: 5px;
+        margin-left: 10px;
+        background-color: var(--secondary-color);
+      }
+
+      #clearFilterButton:hover {
+        background-color: #e67e22;
+      }
+
+      .gallery {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+        gap: 20px;
+        padding: 20px 0;
+      }
+
+      .image-card {
+        background-color: var(--card-background);
+        border-radius: 10px;
+        overflow: hidden;
+        box-shadow: 0 4px 6px var(--shadow-color);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+      }
+
+      .image-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 6px 12px var(--shadow-color);
+      }
+
+      .image-card img {
+        width: 100%;
+        height: 200px;
+        object-fit: cover;
+      }
+
+      .image-info {
+        padding: 15px;
+      }
+
+      .image-title {
+        margin: 0 0 10px 0;
+        font-size: 1.1em;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+
+      .download-link {
+        display: inline-block;
+        padding: 8px 15px;
+        background-color: var(--primary-color);
+        color: white;
+        text-decoration: none;
+        border-radius: 5px;
+        transition: background-color 0.3s ease;
+      }
+
+      .download-link:hover {
+        background-color: #357abd;
+      }
+
+      .loader {
+        display: none;
+        text-align: center;
+        padding: 20px;
+        font-size: 1.2em;
+        color: var(--primary-color);
+      }
+
+      .loader i {
+        animation: spin 1s linear infinite;
+      }
+
+      @keyframes spin {
+        0% {
+          transform: rotate(0deg);
+        }
+        100% {
+          transform: rotate(360deg);
+        }
+      }
+
+      .overlay {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+        z-index: 1000;
+      }
+
+      .popup {
+        display: none;
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background-color: var(--card-background);
+        padding: 30px;
+        border-radius: 10px;
+        box-shadow: 0 4px 20px var(--shadow-color);
+        z-index: 1001;
+        width: 300px;
+      }
+
+      .popup h2 {
+        margin-top: 0;
+        color: var(--primary-color);
+      }
+
+      .popup input {
+        width: 100%;
+        padding: 10px;
+        margin: 10px 0;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        font-size: 1em;
+      }
+
+      .popup button {
+        width: 100%;
+        padding: 10px;
+        background-color: var(--primary-color);
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 1em;
+        transition: background-color 0.3s ease;
+      }
+
+      .popup button:hover {
+        background-color: #357abd;
+      }
+
+      footer {
+        text-align: center;
+        padding: 20px;
+        background-color: var(--primary-color);
+        color: white;
+      }
+
+      footer a {
+        color: white;
+        text-decoration: none;
+        font-size: 1.5em;
+        margin: 0 10px;
+      }
+
+      footer a:hover {
+        color: var(--secondary-color);
+      }
+
+      @media (max-width: 768px) {
+        .search-container {
+          flex-direction: column;
+          align-items: center;
+        }
+
+        #searchInput {
+          width: 80%;
+          border-radius: 5px;
+          margin-bottom: 10px;
+        }
+
+        #filterButton,
+        #clearFilterButton {
+          width: 80%;
+          border-radius: 5px;
+          margin-left: 0;
+          margin-bottom: 10px;
+        }
+
+        .gallery {
+          grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <div class="container">
+        <h1>Mays Zona Libre Product Gallery</h1>
+        <a
+          href="https://github.com/jhonatanjavierdev/"
+          target="_blank"
+          class="creator-link"
+        >
+          Created By Jhon Corella <i class="fab fa-github"></i>
+        </a>
+      </div>
+    </header>
+
+    <main class="container">
+      <div class="search-container">
+        <input
+          type="text"
+          id="searchInput"
+          placeholder="Search by image name..."
+        />
+        <button id="filterButton" class="btn">Set Filter</button>
+        <button id="clearFilterButton" class="btn">Clear Filter</button>
+      </div>
+
+      <div class="loader"><i class="fas fa-spinner"></i> Loading images...</div>
+
+      <div id="gallery" class="gallery"></div>
+    </main>
+
+    <div class="overlay" id="overlay"></div>
+    <div class="popup" id="popup">
+      <h2>Set Filter</h2>
+      <input type="text" id="filterInput" placeholder="Enter filter code..." />
+      <button id="acceptButton">Apply Filter</button>
+    </div>
+
+    <footer>
+      <div class="container">
+        <p>Created By Jhon Corella</p>
+        <a href="https://github.com/jhonatanjavierdev" target="_blank">
+          <i class="fab fa-github"></i>
+        </a>
+      </div>
+    </footer>
+
+    <script>
+      const gallery = document.getElementById("gallery");
+      const loader = document.querySelector(".loader");
+      const searchInput = document.getElementById("searchInput");
+      const filterButton = document.getElementById("filterButton");
+      const clearFilterButton = document.getElementById("clearFilterButton");
+      const popup = document.getElementById("popup");
+      const overlay = document.getElementById("overlay");
+      const filterInput = document.getElementById("filterInput");
+      const acceptButton = document.getElementById("acceptButton");
+
+      let filterCode = "";
+      let debounceTimer;
+
+      function showLoader() {
+        loader.style.display = "block";
+        gallery.innerHTML = "";
+      }
+
+      function hideLoader() {
+        loader.style.display = "none";
+      }
+
+      function showPopup() {
+        overlay.style.display = "block";
+        popup.style.display = "block";
+      }
+
+      function hidePopup() {
+        overlay.style.display = "none";
+        popup.style.display = "none";
+      }
+
+      function createImageCard(image) {
+        const card = document.createElement("div");
+        card.classList.add("image-card");
+
+        const img = document.createElement("img");
+        img.src = image.url;
+        img.alt = image.filename;
+        img.loading = "lazy";
+
+        const info = document.createElement("div");
+        info.classList.add("image-info");
+
+        const title = document.createElement("h3");
+        title.classList.add("image-title");
+        title.textContent = image.filename;
+
+        const downloadLink = document.createElement("a");
+        downloadLink.href = `http://localhost:3000/download?url=${encodeURIComponent(
+          image.url
+        )}`;
+        downloadLink.textContent = "Download";
+        downloadLink.classList.add("download-link");
+        downloadLink.setAttribute("download", image.filename);
+
+        info.appendChild(title);
+        info.appendChild(downloadLink);
+        card.appendChild(img);
+        card.appendChild(info);
+
+        return card;
+      }
+
+      async function fetchImages() {
+        showLoader();
+        const url = filterCode
+          ? `http://localhost:3000/images?code=${filterCode}`
+          : "http://localhost:3000/images";
+        try {
+          const response = await fetch(url);
+          const images = await response.json();
+          const filteredImages = images.filter((image) =>
+            image.filename
+              .toLowerCase()
+              .includes(searchInput.value.toLowerCase())
+          );
+          gallery.innerHTML = "";
+          filteredImages.forEach((image) => {
+            gallery.appendChild(createImageCard(image));
+          });
+        } catch (error) {
+          console.error("Fetch error:", error);
+          gallery.innerHTML =
+            "<p>Error loading images. Please try again later.</p>";
+        } finally {
+          hideLoader();
+        }
+      }
+
+      function debounce(func, delay) {
+        clearTimeout(debounceTimer);
+        debounceTimer = setTimeout(func, delay);
+      }
+
+      function updateUrlWithFilter(code) {
+        const url = new URL(window.location);
+        if (code) {
+          url.searchParams.set("filter", code);
+        } else {
+          url.searchParams.delete("filter");
+        }
+        window.history.pushState({}, "", url);
+      }
+
+      // Event Listeners
+      filterButton.addEventListener("click", showPopup);
+
+      clearFilterButton.addEventListener("click", () => {
+        filterCode = "";
+        filterInput.value = "";
+        searchInput.value = "";
+        updateUrlWithFilter("");
+        fetchImages();
+      });
+
+      acceptButton.addEventListener("click", () => {
+        const code = filterInput.value.trim();
+        if (code) {
+          filterCode = code;
+          updateUrlWithFilter(code);
+          fetchImages();
+        }
+        hidePopup();
+      });
+
+      searchInput.addEventListener("input", () => debounce(fetchImages, 300));
+
+      overlay.addEventListener("click", hidePopup);
+
+      const urlParams = new URLSearchParams(window.location.search);
+      filterCode = urlParams.get("filter") || "";
+      filterInput.value = filterCode;
+      fetchImages();
+    </script>
+  </body>
+</html>
